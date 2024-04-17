@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: alphatestmat
-  m_Shader: {fileID: 4800000, guid: dcdef8fd099780044aceabf256cee7c6, type: 3}
+  m_Name: alphablendmat
+  m_Shader: {fileID: 4800000, guid: 609b3b30e5042214598a2bb38f0da4dc, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -58,8 +58,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaScale: 0.609
     - _BumpScale: 1
-    - _Cutoff: 0.673
+    - _Cutoff: 0.779
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _Gloss: 20

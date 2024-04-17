@@ -1,20 +1,27 @@
-Shader "Chapter08/alphatest"
+Shader "Chapter08/alphablendzwrite"
 {
     Properties
     {
         _Color("Color Tint",Color)=(1,1,1,1)
-        _Cutoff("Alpha Cutoff",Range(0,1))=0.5
+        _AlphaScale("Alpha Scale",Range(0,1))=0.5
         _MainTex ("Main Tex", 2D) = "white" {}
         _Specular("Specular",Color)=(1,1,1,1)
         _Gloss("Gloss",Range(1.0,24.0))=20
     }
     SubShader
     {
-        Tags { "Queue"="AlphaTest" "IgnoreProjector"="True" "RenderType"="TransparentCutout" }
+        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="TransparentCutout" }
         LOD 100
+        Pass
+        {
+            ZWrite On
+            ColorMask 0
+        }
 
         Pass
         {
+            ZWrite Off
+            Blend SrcAlpha OneMinusSrcAlpha
             Tags{"LightMode"="ForwardBase"}
             CGPROGRAM
             #pragma vertex vert
@@ -29,7 +36,7 @@ Shader "Chapter08/alphatest"
             fixed4      _Specular;
             float      _Gloss;
             float4 _MainTex_ST;
-            float      _Cutoff;
+            float      _AlphaScale;
 
             struct appdata
             {
@@ -63,14 +70,8 @@ Shader "Chapter08/alphatest"
 
                 fixed3 worldNormal=i.worldNormal;
                 fixed3 worldLightDir=normalize(_WorldSpaceLightPos0);
-                fixed4 texColor=            tex2D(_MainTex,i.uv);
-                //AlphaTest
-                clip(texColor.a-_Cutoff)   ;
-                //Equal to
-               // if(texColor.a-_Cutoff<0.0)
-               // {
-               //     discard;
-               // }
+                fixed4 texColor=tex2D(_MainTex,i.uv);
+             
               
                 fixed3 abedo=texColor.xyz*_Color.xyz;
                
@@ -83,11 +84,11 @@ Shader "Chapter08/alphatest"
                 fixed3 viewDir=normalize(UnityWorldSpaceViewDir(i.worldPos));
                 fixed3 halfDir=(viewDir+  worldLightDir)/2;
                 fixed3 specular=_LightColor0*abedo*pow(max(0,dot(halfDir,worldNormal)),_Gloss);      //blinn-phong
-                fixed4 col = fixed4(ambient+diffuse+specular,1);
+                fixed4 col = fixed4(ambient+diffuse+specular,texColor.a*_AlphaScale);
                 return col;
             }
             ENDCG
         }
     }
-    FallBack "Transparent/Cutout/VertexLit"
+    FallBack "Transparent/VertexLit"
 }
